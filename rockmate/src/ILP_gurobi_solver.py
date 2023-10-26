@@ -44,13 +44,13 @@ class ModelGurobi:
             for k, v in gurobi_params.items():
                 setattr(self.md.Params, k, v)
 
-        _deps_d = [
+        _deps_d = [ # kdn's parents
             [self.kg.list_kcn.index(kcn) for kcn in self.kg.list_kdn[i].deps]
             for i in range(I)
         ]
         # _deps_c = [[self.kg.list_kdn.index(kdn)
         #             for kdn in self.kg.list_kcn[i].deps_real] for i in range(T)]
-        _users_d = [
+        _users_d = [ # kdn's children
             [
                 self.kg.list_kcn.index(kcn)
                 for kcn in self.kg.list_kdn[i].users_real
@@ -61,17 +61,17 @@ class ModelGurobi:
         # TODO: there's user in the next graph?
         # return [self.kg.list_kcn.index(kcn)
         #         for kcn in self.kg.list_kdn[i].users_real]
-        _users_c = [
+        _users_c = [ # kcn's children
             [self.kg.list_kdn.index(kdn) for kdn in self.kg.list_kcn[i].users]
             for i in range(T)
         ]
 
-        self.create_list = [
+        self.create_list = [ # out-edges from kcns
             (k, i)
             for k, kcn in enumerate(self.kg.list_kcn)
             for i in _users_c[k]
         ]
-        self.delete_list = [
+        self.delete_list = [ # in-edges to and out-edges from kdns
             (k, i)
             for i, kdn in enumerate(self.kg.list_kdn)
             for k in _deps_d[i] + _users_d[i]
