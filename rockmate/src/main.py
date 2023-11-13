@@ -58,9 +58,11 @@ class Rockmate(torch.nn.Module):
         nb_budget_save=10,
         nb_budget_peak=5,
         ilp_solver="gurobi",
+        solver="MIP"
     ):
         super().__init__()
         ref_verbose[0] = verbose
+        self.solver = solver
         self.device = get_device()
         self.original_mod = original_mod
         self.mem_unit = mem_unit if mem_unit else 1024**2
@@ -90,6 +92,7 @@ class Rockmate(torch.nn.Module):
             nb_budget_save,
             nb_budget_peak,
             mem_unit=self.mem_unit,
+            solver=self.solver
         )
         end = time.time()
         self.ILP_solve_time = end - start

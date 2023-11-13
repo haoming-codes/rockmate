@@ -8,6 +8,7 @@ from rockmate.ILP_gurobi_solver import ModelGurobi
 import numpy as np
 from rockmate.def_op import RunOp, DelOp, OpSchedule
 import math
+from moccasin.cp import Moccasin
 
 # ==========================
 # ======== RK Block ========
@@ -16,7 +17,14 @@ import math
 
 def get_rk_solution(list_kg, l_bd_abar, budget_all):
 
-    if True: ##only support for Gurobi solver for now
+    if method == "CP":
+        md = Moccasin.from_kG(
+            list_kg[0],
+            name=None,
+            B=budget_all,
+            objective="min_runtime")
+
+    elif method == "MIP": ##only support for Gurobi solver for now
         param_dict = {
             "LogToConsole": 0,
             "IntegralityFocus": 1,
@@ -185,7 +193,10 @@ class RK_Chain:
         nb_budget_abar=10,
         nb_budget_all=3,
         mem_unit=None,
+        solver="MIP"
     ):
+        global method
+        method = solver
         if mem_unit:
             self.mem_unit = mem_unit
         else:
